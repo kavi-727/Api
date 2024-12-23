@@ -7,13 +7,14 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     libxml2-dev \
     libgit2-dev \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Plumber and other required R packages
-RUN R -e "install.packages(c('plumber'), repos='http://cran.rstudio.com/')"
+# Install Plumber from a reliable CRAN mirror
+RUN R -e "install.packages('plumber', repos='https://cloud.r-project.org/')"
 
-# Verify Plumber installation
-RUN R -e "if (!requireNamespace('plumber', quietly=TRUE)) { stop('Plumber not installed') }"
+# Check if Plumber is installed and print the version if successful
+RUN R -e "if (!requireNamespace('plumber', quietly=TRUE)) { stop('Plumber installation failed') } else { print('Plumber installed successfully'); print(packageVersion('plumber')) }"
 
 # Set the working directory
 WORKDIR /app
