@@ -1,7 +1,3 @@
-Share
-
-KS
-You said:
 # Base image for R
 FROM rstudio/plumber:latest
 
