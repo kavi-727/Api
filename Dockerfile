@@ -1,15 +1,15 @@
 # Use the official R base image
 FROM r-base:4.3.1
 
-# Install required R packages
+# Install required system libraries
 RUN apt-get update && apt-get install -y \
     libcurl4-openssl-dev \
     libssl-dev \
     libxml2-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Plumber package in R
-RUN R -e "install.packages('plumber', repos='http://cran.rstudio.com/')"
+# Install Plumber and dependencies
+RUN R -e "install.packages(c('plumber', 'jsonlite'), repos='http://cran.rstudio.com/')"
 
 # Set the working directory
 WORKDIR /app
