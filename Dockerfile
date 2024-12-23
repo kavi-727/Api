@@ -5,7 +5,7 @@ FROM rstudio/plumber:latest
 ENV PORT=8000
 
 # Copy the API script to the container
-COPY disease_api /app/disease_api
+COPY disease_api.R /app/disease_api.R
 
 # Set the working directory
 WORKDIR /app
