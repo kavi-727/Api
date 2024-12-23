@@ -1,15 +1,19 @@
 # Use the official R base image
 FROM r-base:4.3.1
 
-# Install required R packages
+# Install required system libraries
 RUN apt-get update && apt-get install -y \
     libcurl4-openssl-dev \
     libssl-dev \
     libxml2-dev \
+    libgit2-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Plumber package in R
-RUN R -e "install.packages('plumber', repos='http://cran.rstudio.com/')"
+# Install Plumber and other required R packages
+RUN R -e "install.packages(c('plumber'), repos='http://cran.rstudio.com/')"
+
+# Verify Plumber installation
+RUN R -e "if (!requireNamespace('plumber', quietly=TRUE)) { stop('Plumber not installed') }"
 
 # Set the working directory
 WORKDIR /app
