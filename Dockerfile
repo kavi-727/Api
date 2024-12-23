@@ -1,29 +1,20 @@
-# Use the official R base image
-FROM r-base:4.3.1
+# Base image for R
+FROM rstudio/plumber:latest
 
-# Install required system libraries
-RUN apt-get update && apt-get install -y \
-    libcurl4-openssl-dev \
-    libssl-dev \
-    libxml2-dev \
-    libgit2-dev \
-    build-essential \
-    && rm -rf /var/lib/apt/lists/*
+# Set environment variables
+ENV PORT=8000
 
-# Install Plumber from a reliable CRAN mirror
-RUN R -e "install.packages('plumber', repos='https://cloud.r-project.org/')"
-
-# Check if Plumber is installed and print the version if successful
-RUN R -e "if (!requireNamespace('plumber', quietly=TRUE)) { stop('Plumber installation failed') } else { print('Plumber installed successfully'); print(packageVersion('plumber')) }"
+# Copy the API script to the container
+COPY api.R /app/api.R
 
 # Set the working directory
 WORKDIR /app
 
-# Copy the API script to the container
-COPY disease_api.R /app/disease_api.R
+# Install necessary R packages
+RUN R -e "install.packages('plumber')"
 
-# Expose the port the API will run on
-EXPOSE 8000
+# Expose the port
+EXPOSE $PORT
 
-# Run the Plumber API
-CMD ["R", "-e", "pr <- plumber::plumb('/app/disease_api.R'); pr$run(host='0.0.0.0', port=8000)"]
+# Command to run the API
+CMD ["R", "-e", "pr <- plumber::plumb('api.R'); pr$run(host='0.0.0.0', port=as.numeric(Sys.getenv('PORT')))" ]
